@@ -5,5 +5,14 @@
     </head>
     <body>
         밥 아저씨 프로젝트, 시작페이지 !
+        <script type='text/javascript'>
+        if(!navigator.geolocation) {
+                console.log('not supported aboute geolocation in this browser.');
+            }
+
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                document.write(pos.coords.longtitue + ', ' + pos.coords.latitue);
+            })
+        </script>
     </body>
 </html>
