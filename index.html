@@ -11,7 +11,8 @@
             }
 
             navigator.geolocation.getCurrentPosition(function(pos) {
-                document.write(pos.coords.longtitue + ', ' + pos.coords.latitue);
+                console.log(pos.coords.longtitude + ', ' + pos.coords.latitude);
+                document.write(pos.coords.longtitude + ', ' + pos.coords.latitude);
             })
         </script>
     </body>
