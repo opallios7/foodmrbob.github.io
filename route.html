@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script type='text/javascript' src='https://apis.daum.net/maps/maps3.js?apikey=7702ed66ec6b51b5f7573a191eb59756'></script>
+    <script language="javascript" src="https:////apis.skplanetx.com/tmap/js?version=1&format=javascript&appKey=5673141f-1b83-3b33-b816-3b5f29be4101"></script>
+    <link rel='stylesheet' href='./css/common.css'>
+    <link rel='stylesheet' href='./css/map.css'>
+    <link rel='stylesheet' href='./css/route.css'>
+</head>
+<body>
+    <div class='wrap'>
+        <input type='text' class='textbox' id='txtStartLat' placeholder='시작 lat값'/>
+        <input type='text' class='textbox' id='txtStartLng' placeholder='시작 lng값'/>
+        <input type='text' class='textbox' id='txtEndLat' placeholder='종료 lat값'/>
+        <input type='text' class='textbox' id='txtEndLng' placeholder='종료 lng값'/>
+        <button class='btn' id='btn'>검색</button>
+        <div class='map' id='map'></div>
+    </div>
+    
+    <!--
+    <div class='map' id='map'></div>
+    <button class='btn_start'>시작지점설정</button>
+    <button class='btn_end'>종료지점설정</button>
+    -->
+    <script type='text/javascript'>
+
+    var currentLat = undefined;
+    var currentLng = undefined;
+
+    // HTML5 API, 지도 좌표가져오기
+    if(!navigator.geolocation) {
+        console.log('not supported aboute geolocation in this browser.');
+    }
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        
+        if(pos.coords.latitude != null && pos.coords.latitude != undefined)
+        {
+            txtStartLat.value = pos.coords.latitude;
+            currentLat = pos.coords.latitude;
+        }
+            
+        if(pos.coords.longitude != null && pos.coords.longitude != undefined)
+        {
+            txtStartLng.value = pos.coords.longitude;
+            currentLng = pos.coords.longitude;
+        }
+
+        if(currentLat > 0 && currentLng > 0) 
+        {
+            var latLng = new daum.maps.LatLng(currentLat, currentLng);
+            map.panTo(latLng);
+            setMarker(latLng);
+        }
+
+    })
+
+    var container = document.getElementById('map');
+    let map =  new daum.maps.Map(container,{
+        // options
+        center: new daum.maps.LatLng(33.450701, 126.570667), // Cetner position
+	    level: 3 // Level
+    });
+
+    var markers = [];
+    let txtStartLat = document.getElementById('txtStartLat');
+    let txtStartLng = document.getElementById('txtStartLng');
+    let txtEndLat = document.getElementById('txtEndLat');
+    let txtEndLng = document.getElementById('txtEndLng');
+    let btnSearch = document.getElementById('btn');
+
+    var startLat = 0;
+    var startLng = 0;
+    var endLat = 0;
+    var endLng = 0;
+
+    daum.maps.event.addListener(map, 'click', function(mouseEvent){
+        setMarker(mouseEvent.latLng);
+    });
+
+    function setMarker(latLng) {
+        if(markers.length > 1) {
+            markers.forEach(function(obj){
+                obj.setMap(null);
+            });
+            
+            markers = [];
+        }
+
+        var marker = new daum.maps.Marker({
+            position:latLng 
+        });
+
+        marker.setMap(map);
+        markers[markers.length] = marker;
+
+        switch(markers.length)
+        {
+            case 1 :
+                txtStartLat.value = latLng.getLat();
+                txtStartLng.value = latLng.getLng();
+                break;
+            case 2 :
+                txtEndLat.value = latLng.getLat();
+                txtEndLng.value = latLng.getLng();
+                break;
+            default :
+                break;
+        }
+    }
+
+    // 검색버튼 클릭이벤트
+    btnSearch.addEventListener('click', function(e){
+        console.log('시작좌표 : ' + txtStartLat.value + ', ' + txtStartLng.value);
+        console.log('종료좌표 : ' + txtEndLat.value + ', ' + txtEndLng.value);
+    });
+    
+    </script>
+    
+</body>
+</html>
